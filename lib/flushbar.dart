@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
 import 'dart:async';
-
 import 'package:flutter/scheduler.dart';
 
 class _FlushbarRoute<T> extends OverlayRoute<T> {
@@ -62,9 +60,7 @@ class _FlushbarRoute<T> extends OverlayRoute<T> {
             final Widget annotatedChild = new Semantics(
               child: AlignTransition(
                 alignment: _animation,
-                child: flushbar.isDismissible
-                    ? _getDismissibleFlushbar(_builder)
-                    : Padding(padding: flushbar.aroundPadding, child: _builder),
+                child: flushbar.isDismissible ? _getDismissibleFlushbar(_builder) : Padding(padding: flushbar.aroundPadding, child: _builder),
               ),
               focused: true,
               scopesRoute: true,
@@ -136,8 +132,7 @@ class _FlushbarRoute<T> extends OverlayRoute<T> {
   Animation<Alignment> createAnimation() {
     assert(!_transitionCompleter.isCompleted, 'Cannot reuse a $runtimeType after disposing it.');
     assert(_controller != null);
-    return AlignmentTween(begin: _initialAlignment, end: _endAlignment).animate(new CurvedAnimation(
-        parent: _controller, curve: flushbar.forwardAnimationCurve, reverseCurve: flushbar.reverseAnimationCurve));
+    return AlignmentTween(begin: _initialAlignment, end: _endAlignment).animate(new CurvedAnimation(parent: _controller, curve: flushbar.forwardAnimationCurve, reverseCurve: flushbar.reverseAnimationCurve));
   }
 
   T _result;
@@ -352,9 +347,11 @@ class Flushbar<T extends Object> extends StatefulWidget {
   /// [onStatusChanged] A callback used to listen to Flushbar status [FlushbarStatus]. Set it using [setStatusListener()]
   FlushbarStatusCallback onStatusChanged = (FlushbarStatus status) {};
   String title;
+  String date;
   String message;
   Text titleText;
   Text messageText;
+  String dateText;
   Color backgroundColor;
   Color leftBarIndicatorColor;
   Color shadowColor;
@@ -449,17 +446,20 @@ class _FlushbarState<K extends Object> extends State<Flushbar> with TickerProvid
   }
 
   bool _isTitlePresent;
+  bool _isDatePresent;
   double _messageTopMargin;
+  double _messageBottomMargin;
 
   @override
   void initState() {
     super.initState();
 
-    assert(((widget.userInputForm != null || (widget.message != null || widget.messageText != null))),
-        "Don't forget to show a message to your user!");
+    assert(((widget.userInputForm != null || (widget.message != null || widget.messageText != null))), "Don't forget to show a message to your user!");
 
     _isTitlePresent = (widget.title != null || widget.titleText != null);
+    _isDatePresent = (widget.date != null || widget.dateText != null);
     _messageTopMargin = _isTitlePresent ? 6.0 : 16.0;
+    _messageBottomMargin = _isDatePresent ? 6.0 : 16.0;
 
     _setBoxShadow();
 
@@ -565,16 +565,7 @@ class _FlushbarState<K extends Object> extends State<Flushbar> with TickerProvid
       heightFactor: 1.0,
       child: Material(
         color: Colors.transparent,
-        child: SafeArea(
-          minimum: widget.flushbarPosition == FlushbarPosition.BOTTOM
-              ? EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom)
-              : EdgeInsets.only(top: MediaQuery.of(context).viewInsets.top),
-          bottom: widget.flushbarPosition == FlushbarPosition.BOTTOM,
-          top: widget.flushbarPosition == FlushbarPosition.TOP,
-          left: false,
-          right: false,
-          child: _getFlushbar(),
-        ),
+        child: _getFlushbar(),
       ),
     );
   }
@@ -616,19 +607,25 @@ class _FlushbarState<K extends Object> extends State<Flushbar> with TickerProvid
         boxShadow: _getBoxShadowList(),
         borderRadius: BorderRadius.circular(widget.borderRadius),
       ),
-      child: new Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          widget.showProgressIndicator
-              ? LinearProgressIndicator(
-                  value: widget.progressIndicatorController != null ? _progressAnimation.value : null,
-                  backgroundColor: widget.progressIndicatorBackgroundColor,
-                  valueColor: widget.progressIndicatorValueColor,
-                )
-              : _emptyWidget,
-          new Row(mainAxisSize: MainAxisSize.max, children: _getAppropriateRowLayout()),
-        ],
-      ),
+      child: SafeArea(
+          minimum: widget.flushbarPosition == FlushbarPosition.BOTTOM ? EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom) : EdgeInsets.only(top: MediaQuery.of(context).viewInsets.top),
+          bottom: widget.flushbarPosition == FlushbarPosition.BOTTOM,
+          top: widget.flushbarPosition == FlushbarPosition.TOP,
+          left: false,
+          right: false,
+          child: new Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              widget.showProgressIndicator
+                  ? LinearProgressIndicator(
+                      value: widget.progressIndicatorController != null ? _progressAnimation.value : null,
+                      backgroundColor: widget.progressIndicatorBackgroundColor,
+                      valueColor: widget.progressIndicatorValueColor,
+                    )
+                  : _emptyWidget,
+              new Row(mainAxisSize: MainAxisSize.max, children: _getAppropriateRowLayout()),
+            ],
+          )),
     );
   }
 
@@ -649,9 +646,15 @@ class _FlushbarState<K extends Object> extends State<Flushbar> with TickerProvid
                     )
                   : _emptyWidget,
               new Padding(
-                padding: EdgeInsets.only(top: _messageTopMargin, left: 16.0, right: 16.0, bottom: 16.0),
+                padding: EdgeInsets.only(top: _messageTopMargin, left: 16.0, right: 16.0, bottom: _messageBottomMargin),
                 child: widget.messageText ?? _getDefaultNotificationText(),
               ),
+              (_isDatePresent)
+                  ? new Padding(
+                      padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+                      child: _getDateText(),
+                    )
+                  : _emptyWidget,
             ],
           ),
         ),
@@ -660,7 +663,7 @@ class _FlushbarState<K extends Object> extends State<Flushbar> with TickerProvid
       return <Widget>[
         _buildLeftBarIndicator(),
         new ConstrainedBox(
-          constraints: BoxConstraints.tightFor(width: 42.0),
+          constraints: BoxConstraints.tightFor(width: 58.0),
           child: _getIcon(),
         ),
         new Expanded(
@@ -676,9 +679,15 @@ class _FlushbarState<K extends Object> extends State<Flushbar> with TickerProvid
                     )
                   : _emptyWidget,
               new Padding(
-                padding: EdgeInsets.only(top: _messageTopMargin, left: 4.0, right: 16.0, bottom: 16.0),
+                padding: EdgeInsets.only(top: _messageTopMargin, left: 4.0, right: 16.0, bottom: _messageBottomMargin),
                 child: widget.messageText ?? _getDefaultNotificationText(),
               ),
+              (_isDatePresent)
+                  ? new Padding(
+                      padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+                      child: _getDateText(),
+                    )
+                  : _emptyWidget,
             ],
           ),
         ),
@@ -699,9 +708,15 @@ class _FlushbarState<K extends Object> extends State<Flushbar> with TickerProvid
                     )
                   : _emptyWidget,
               new Padding(
-                padding: EdgeInsets.only(top: _messageTopMargin, left: 16.0, right: 8.0, bottom: 16.0),
+                padding: EdgeInsets.only(top: _messageTopMargin, left: 4.0, right: 16.0, bottom: _messageBottomMargin),
                 child: widget.messageText ?? _getDefaultNotificationText(),
               ),
+              (_isDatePresent)
+                  ? new Padding(
+                      padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+                      child: _getDateText(),
+                    )
+                  : _emptyWidget,
             ],
           ),
         ),
@@ -727,9 +742,15 @@ class _FlushbarState<K extends Object> extends State<Flushbar> with TickerProvid
                     )
                   : _emptyWidget,
               new Padding(
-                padding: EdgeInsets.only(top: _messageTopMargin, left: 4.0, right: 8.0, bottom: 16.0),
+                padding: EdgeInsets.only(top: _messageTopMargin, left: 4.0, right: 16.0, bottom: _messageBottomMargin),
                 child: widget.messageText ?? _getDefaultNotificationText(),
               ),
+              (_isDatePresent)
+                  ? new Padding(
+                      padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+                      child: _getDateText(),
+                    )
+                  : _emptyWidget,
             ],
           ),
         ),
@@ -781,6 +802,15 @@ class _FlushbarState<K extends Object> extends State<Flushbar> with TickerProvid
         ? widget.titleText
         : new Text(
             widget.title ?? "",
+            style: TextStyle(fontSize: 16.0, color: Colors.white, fontWeight: FontWeight.bold),
+          );
+  }
+
+  Text _getDateText() {
+    return widget.dateText != null
+        ? widget.dateText
+        : new Text(
+            widget.date ?? "",
             style: TextStyle(fontSize: 16.0, color: Colors.white, fontWeight: FontWeight.bold),
           );
   }

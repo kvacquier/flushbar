@@ -351,7 +351,7 @@ class Flushbar<T extends Object> extends StatefulWidget {
   String message;
   Text titleText;
   Text messageText;
-  String dateText;
+  Text dateText;
   Color backgroundColor;
   Color leftBarIndicatorColor;
   Color shadowColor;

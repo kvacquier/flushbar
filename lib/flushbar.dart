@@ -652,7 +652,7 @@ class _FlushbarState<K extends Object> extends State<Flushbar> with TickerProvid
               ),
               (_isDatePresent)
                   ? new Padding(
-                      padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+                      padding: const EdgeInsets.only(bottom: 16.0, left: 16.0, right: 16.0),
                       child: _getDateText(),
                     )
                   : _emptyWidget,
@@ -685,7 +685,7 @@ class _FlushbarState<K extends Object> extends State<Flushbar> with TickerProvid
               ),
               (_isDatePresent)
                   ? new Padding(
-                      padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+                      padding: const EdgeInsets.only(bottom: 16.0, left: 4.0, right: 16.0),
                       child: _getDateText(),
                     )
                   : _emptyWidget,
@@ -714,7 +714,7 @@ class _FlushbarState<K extends Object> extends State<Flushbar> with TickerProvid
               ),
               (_isDatePresent)
                   ? new Padding(
-                      padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+                      padding: const EdgeInsets.only(bottom: 16.0, left: 4.0, right: 16.0),
                       child: _getDateText(),
                     )
                   : _emptyWidget,
@@ -748,7 +748,7 @@ class _FlushbarState<K extends Object> extends State<Flushbar> with TickerProvid
               ),
               (_isDatePresent)
                   ? new Padding(
-                      padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+                      padding: const EdgeInsets.only(bottom: 16.0, left: 4.0, right: 16.0),
                       child: _getDateText(),
                     )
                   : _emptyWidget,

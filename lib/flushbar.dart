@@ -324,6 +324,7 @@ class Flushbar<T extends Object> extends StatefulWidget {
       this.message,
       this.titleText,
       this.messageText,
+      this.dateText,
       this.icon,
       this.aroundPadding = const EdgeInsets.all(0.0),
       this.borderRadius = 0.0,

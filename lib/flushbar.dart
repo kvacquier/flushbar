@@ -663,10 +663,7 @@ class _FlushbarState<K extends Object> extends State<Flushbar> with TickerProvid
     } else if (widget.icon != null && widget.mainButton == null) {
       return <Widget>[
         _buildLeftBarIndicator(),
-        new ConstrainedBox(
-          constraints: BoxConstraints.tightFor(width: 58.0),
-          child: _getIcon(),
-        ),
+        _getIcon(),
         new Expanded(
           flex: 1,
           child: new Column(
@@ -729,7 +726,7 @@ class _FlushbarState<K extends Object> extends State<Flushbar> with TickerProvid
     } else {
       return <Widget>[
         _buildLeftBarIndicator(),
-        new ConstrainedBox(constraints: BoxConstraints.tightFor(width: 42.0), child: _getIcon()),
+        _getIcon(),
         new Expanded(
           flex: 1,
           child: new Column(

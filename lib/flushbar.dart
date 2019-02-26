@@ -236,7 +236,7 @@ class _FlushbarRoute<T> extends OverlayRoute<T> {
         _timer.cancel();
       }
       _timer = new Timer(flushbar.duration, () {
-        if(flushbar._flushbarRoute.isCurrent){
+        if (flushbar._flushbarRoute.isCurrent) {
           navigator.pop();
         }
       });
@@ -580,37 +580,37 @@ class _FlushbarState<K extends Object> extends State<Flushbar> with TickerProvid
   GlobalKey backgroundBoxKey = new GlobalKey();
 
   Widget _generateFlushbar() {
-    return new DecoratedBox(
-      key: backgroundBoxKey,
-      decoration: new BoxDecoration(
-        color: widget.backgroundColor,
-        gradient: widget.backgroundGradient,
-        boxShadow: _getBoxShadowList(),
-        borderRadius: BorderRadius.circular(widget.borderRadius),
-      ),
-      child: SafeArea(
-          minimum: widget.flushbarPosition == FlushbarPosition.BOTTOM ? EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom) : EdgeInsets.only(top: MediaQuery.of(context).viewInsets.top),
-          bottom: widget.flushbarPosition == FlushbarPosition.BOTTOM,
-          top: widget.flushbarPosition == FlushbarPosition.TOP,
-          left: false,
-          right: false,
-          child:  new GestureDetector(
-          onTap: () {
-            _getMainActionButton().onPressed();
-          },
-          child:new Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              widget.showProgressIndicator
-                  ? LinearProgressIndicator(
-                      value: widget.progressIndicatorController != null ? _progressAnimation.value : null,
-                      backgroundColor: widget.progressIndicatorBackgroundColor,
-                      valueColor: widget.progressIndicatorValueColor,
-                    )
-                  : _emptyWidget,
-              new Row(mainAxisSize: MainAxisSize.max, children: _getAppropriateRowLayout()),
-            ],
-          ))),
+    return new GestureDetector(
+      onTap: () {
+        _getMainActionButton().onPressed();
+      },
+      child: new DecoratedBox(
+          key: backgroundBoxKey,
+          decoration: new BoxDecoration(
+            color: widget.backgroundColor,
+            gradient: widget.backgroundGradient,
+            boxShadow: _getBoxShadowList(),
+            borderRadius: BorderRadius.circular(widget.borderRadius),
+          ),
+          child: SafeArea(
+              minimum: widget.flushbarPosition == FlushbarPosition.BOTTOM ? EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom) : EdgeInsets.only(top: MediaQuery.of(context).viewInsets.top),
+              bottom: widget.flushbarPosition == FlushbarPosition.BOTTOM,
+              top: widget.flushbarPosition == FlushbarPosition.TOP,
+              left: false,
+              right: false,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  widget.showProgressIndicator
+                      ? LinearProgressIndicator(
+                          value: widget.progressIndicatorController != null ? _progressAnimation.value : null,
+                          backgroundColor: widget.progressIndicatorBackgroundColor,
+                          valueColor: widget.progressIndicatorValueColor,
+                        )
+                      : _emptyWidget,
+                  new Row(mainAxisSize: MainAxisSize.max, children: _getAppropriateRowLayout()),
+                ],
+              ))),
     );
   }
 

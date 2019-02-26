@@ -80,6 +80,7 @@ class _FlushbarRoute<T> extends OverlayRoute<T> {
     return new Dismissible(
       resizeDuration: null,
       key: Key(dismissibleKeyGen),
+      direction: DismissDirection.up,
       onDismissed: (_) {
         dismissibleKeyGen += "1";
         _cancelTimer();
@@ -593,7 +594,11 @@ class _FlushbarState<K extends Object> extends State<Flushbar> with TickerProvid
           top: widget.flushbarPosition == FlushbarPosition.TOP,
           left: false,
           right: false,
-          child: new Column(
+          child:  new GestureDetector(
+          onTap: () {
+            _getMainActionButton().onPressed();
+          },
+          child:new Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               widget.showProgressIndicator
@@ -605,7 +610,7 @@ class _FlushbarState<K extends Object> extends State<Flushbar> with TickerProvid
                   : _emptyWidget,
               new Row(mainAxisSize: MainAxisSize.max, children: _getAppropriateRowLayout()),
             ],
-          )),
+          ))),
     );
   }
 
